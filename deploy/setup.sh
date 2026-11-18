@@ -59,6 +59,13 @@ if [ ! -d "$APP_DIR/supabase-project" ]; then
   sed -i "s#^SERVICE_ROLE_KEY=.*#SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}#" "$APP_DIR/supabase-project/.env"
   sed -i "s#^SITE_URL=.*#SITE_URL=https://${DOMAIN}#" "$APP_DIR/supabase-project/.env"
   sed -i "s#^API_EXTERNAL_URL=.*#API_EXTERNAL_URL=https://${DOMAIN}/api#" "$APP_DIR/supabase-project/.env"
+  # No SMTP configured yet: auto-confirm email signups so login works immediately.
+  # Once real SMTP is set up, change this back to false.
+  if grep -q '^ENABLE_EMAIL_AUTOCONFIRM=' "$APP_DIR/supabase-project/.env"; then
+    sed -i "s#^ENABLE_EMAIL_AUTOCONFIRM=.*#ENABLE_EMAIL_AUTOCONFIRM=true#" "$APP_DIR/supabase-project/.env"
+  else
+    echo "ENABLE_EMAIL_AUTOCONFIRM=true" >> "$APP_DIR/supabase-project/.env"
+  fi
 
   mkdir -p "$APP_DIR/secrets"
   cat > "$APP_DIR/secrets/supabase_keys.txt" <<EOF2
